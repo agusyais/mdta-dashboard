@@ -84,7 +84,7 @@ async function tampilkanLaporan() {
 
     const daftarTampil = kelasTerpilih === 'Semua Kelas' || !kelasTerpilih
       ? daftarSantriGlobal
-      : daftarSantriGlobal.filter((s) => s.kelas === kelasTerpilih);
+      : daftarSantriGlobal.filter((s) => (s.kelas || '').toString().trim().toLowerCase() === kelasTerpilih.toString().trim().toLowerCase());
 
     const hasilPerSantri = daftarTampil.map((santri) => {
       const recordSantri = filteredRecord.filter((r) => {
