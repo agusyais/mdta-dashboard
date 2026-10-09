@@ -9,7 +9,10 @@ function setupAbsensi() {
   document.getElementById('btnSimpanAbsensi').addEventListener('click', simpanAbsensi);
 }
 
-function siapkanHalamanAbsensi() {
+async function siapkanHalamanAbsensi() {
+  if (daftarSantriGlobal.length === 0 && typeof muatDaftarSantri === 'function') {
+    await muatDaftarSantri();
+  }
   // Isi dropdown kelas dari daftar santri yang ada
   const daftarKelas = ['Semua Kelas', ...new Set(daftarSantriGlobal.map((s) => s.kelas).filter(Boolean))];
   const select = document.getElementById('absensiFilterKelas');
@@ -31,8 +34,9 @@ async function muatAbsensiTanggalIni() {
 
     // Filter yang cocok dengan tanggal terpilih (format yyyy-mm-dd)
     list.forEach((data) => {
+      const sId = (data.santriId || data.santriid || data.santrid || data.santri_id || '').toString().trim();
       if (data.tanggal && data.tanggal.startsWith(tanggal)) {
-        statusAbsensiTerpilih[data.santriId] = data.status;
+        statusAbsensiTerpilih[sId] = data.status;
       }
     });
 
@@ -48,7 +52,7 @@ function renderDaftarAbsensi() {
 
   const daftarTampil = kelasTerpilih === 'Semua Kelas' || !kelasTerpilih
     ? daftarSantriGlobal
-    : daftarSantriGlobal.filter((s) => s.kelas === kelasTerpilih);
+    : daftarSantriGlobal.filter((s) => (s.kelas || '').toString().trim().toLowerCase() === kelasTerpilih.toString().trim().toLowerCase());
 
   if (daftarTampil.length === 0) {
     container.innerHTML = '<div class="empty-state">Tidak ada santri di kelas ini</div>';
